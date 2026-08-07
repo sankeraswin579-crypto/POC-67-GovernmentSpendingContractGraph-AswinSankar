@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@tanstack/react-table": "^9.0.0",
+    "@xyflow/react": "^12.11.2",
     "lucide-react": "^1.29.0",
     "recharts": "^3.10.1"
   }

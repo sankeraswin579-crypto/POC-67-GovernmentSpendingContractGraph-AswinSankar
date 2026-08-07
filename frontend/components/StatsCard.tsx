@@ -1,63 +1,74 @@
 "use client";
 
-type Props = {
+import { LucideIcon, TrendingUp } from "lucide-react";
+
+interface StatsCardProps {
+  icon: LucideIcon;
   title: string;
-  value: string | number;
-  change?: string;
-  color?: string;
-};
+  value: string;
+  change: string;
+  color: string;
+}
 
 export default function StatsCard({
+  icon: Icon,
   title,
   value,
   change,
-  color = "#38bdf8",
-}: Props) {
+  color,
+}: StatsCardProps) {
   return (
-    <div
-      style={{
-        background: "#0f172a",
-        border: "1px solid #1e293b",
-        borderRadius: 12,
-        padding: 20,
-        minHeight: 120,
-      }}
-    >
-      <div
-        style={{
-          color: "#94a3b8",
-          fontSize: 14,
-        }}
-      >
-        {title}
-      </div>
+    <div className="group rounded-2xl border border-slate-800 bg-[#0B1117] p-6 transition-all duration-300 hover:border-cyan-500 hover:shadow-[0_0_20px_rgba(56,189,248,0.15)]">
 
-      <div
-        style={{
-          marginTop: 12,
-          fontSize: 30,
-          fontWeight: 700,
-          color,
-        }}
-      >
-        {value}
-      </div>
+      <div className="flex items-center justify-between">
 
-      {change && (
+        <div>
+          <p className="text-sm font-medium text-slate-400">
+            {title}
+          </p>
+
+          <h2 className="mt-2 text-3xl font-bold text-white">
+            {value}
+          </h2>
+        </div>
+
         <div
+          className="flex h-14 w-14 items-center justify-center rounded-xl"
           style={{
-            marginTop: 10,
-            fontSize: 13,
-            color:
-              change.startsWith("-")
-                ? "#ef4444"
-                : "#22c55e",
-            fontWeight: 600,
+            backgroundColor: `${color}20`,
           }}
         >
-          {change}
+          <Icon
+            size={28}
+            style={{
+              color,
+            }}
+          />
         </div>
-      )}
+
+      </div>
+
+      <div className="mt-6 flex items-center justify-between">
+
+        <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1">
+
+          <TrendingUp
+            size={14}
+            className="text-emerald-400"
+          />
+
+          <span className="text-sm font-semibold text-emerald-400">
+            {change}
+          </span>
+
+        </div>
+
+        <span className="text-xs text-slate-500">
+          vs last year
+        </span>
+
+      </div>
+
     </div>
   );
 }

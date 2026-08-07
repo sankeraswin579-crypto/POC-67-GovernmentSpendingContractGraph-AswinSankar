@@ -1,33 +1,34 @@
 "use client";
 
-import { BrainCircuit } from "lucide-react";
+const questions = [
+  "Which department has the highest spending?",
+  "Which supplier dominates procurement?",
+  "Which state received the largest budget?",
+  "Which agency increased spending the most?",
+  "Which contracts appear unusual?",
+  "Which supplier shows procurement risk?",
+  "How has spending changed this year?",
+  "Which category receives maximum funding?",
+  "Where are procurement bottlenecks?",
+  "What are the AI recommendations?"
+];
 
-interface QuestionCardProps {
-  number: number;
-  question: string;
-}
-
-export default function QuestionCard({
-  number,
-  question,
-}: QuestionCardProps) {
+export default function QuestionCard() {
   return (
-    <div className="flex items-start gap-4 rounded-xl border border-cyan-700/30 bg-slate-900/70 p-4 hover:border-cyan-500 transition-all duration-300">
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-900/40">
-        <BrainCircuit
-          className="text-cyan-400"
-          size={18}
-        />
-      </div>
+    <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+      <h2 className="mb-4 text-lg font-bold text-cyan-400">
+        AI Intelligence Questions
+      </h2>
 
-      <div>
-        <p className="text-cyan-400 font-semibold">
-          Question {number}
-        </p>
-
-        <p className="text-gray-300 mt-1">
-          {question}
-        </p>
+      <div className="space-y-3">
+        {questions.map((question, index) => (
+          <div
+            key={index}
+            className="rounded-lg border border-slate-800 bg-[#030712] p-3 text-sm text-slate-300 transition hover:border-cyan-500 hover:text-white"
+          >
+            {index + 1}. {question}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ interface InsightCardProps {
   title: string;
   value: string;
   description: string;
-  color?: string;
+  color: string;
 }
 
 export default function InsightCard({
@@ -15,25 +15,23 @@ export default function InsightCard({
   title,
   value,
   description,
-  color = "text-cyan-400",
+  color,
 }: InsightCardProps) {
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-900/70 p-5 hover:border-cyan-500 transition-all duration-300 hover:shadow-lg">
-      <div className="flex items-center gap-3 mb-3">
-        <div className="rounded-lg bg-slate-800 p-2">
-          <Icon className={color} size={22} />
-        </div>
-
-        <h3 className="text-white font-semibold">
+    <div className="rounded-xl border border-slate-800 bg-slate-900 p-5 shadow-md transition hover:border-cyan-500">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-slate-300">
           {title}
         </h3>
+
+        <Icon className={`h-6 w-6 ${color}`} />
       </div>
 
-      <h2 className={`text-2xl font-bold ${color}`}>
+      <h2 className="mt-3 text-3xl font-bold text-white">
         {value}
       </h2>
 
-      <p className="mt-2 text-sm text-gray-400 leading-6">
+      <p className="mt-3 text-sm leading-6 text-slate-400">
         {description}
       </p>
     </div>

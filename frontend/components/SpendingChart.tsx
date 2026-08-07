@@ -34,22 +34,31 @@ export default function SpendingChart() {
     .join(" ");
 
   return (
-    <div className="rounded-2xl border border-cyan-500/20 bg-[#07131F] p-6 shadow-xl">
+    <div className="rounded-2xl border border-slate-800 bg-[#0B1117] p-6 shadow-lg">
 
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-white">
-          Monthly Spending Trend
-        </h2>
+      <div className="mb-6 flex items-center justify-between">
 
-        <p className="text-sm text-slate-400">
-          Government expenditure over the last six months
-        </p>
+        <div>
+          <h2 className="text-xl font-bold text-white">
+            Monthly Spending Trend
+          </h2>
+
+          <p className="text-sm text-slate-400">
+            Government expenditure over the last six months
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-cyan-500/10 px-3 py-1 text-sm font-medium text-cyan-400">
+          +18%
+        </div>
+
       </div>
 
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full"
       >
+
         {/* Grid */}
 
         {[0, 1, 2, 3, 4].map((i) => {
@@ -64,17 +73,26 @@ export default function SpendingChart() {
               y1={y}
               x2={width - padding}
               y2={y}
-              stroke="#334155"
-              strokeDasharray="5 5"
+              stroke="#1F2937"
+              strokeDasharray="4 4"
             />
           );
         })}
+
+        {/* Area */}
+
+        <polygon
+          fill="rgba(56,189,248,0.10)"
+          points={`${padding},${height-padding} ${points} ${
+            width - padding
+          },${height-padding}`}
+        />
 
         {/* Line */}
 
         <polyline
           fill="none"
-          stroke="#06B6D4"
+          stroke="#38BDF8"
           strokeWidth="4"
           points={points}
           strokeLinecap="round"
@@ -84,6 +102,7 @@ export default function SpendingChart() {
         {/* Points */}
 
         {data.map((d, i) => {
+
           const x =
             padding +
             (i * (width - padding * 2)) /
@@ -97,18 +116,28 @@ export default function SpendingChart() {
 
           return (
             <g key={d.month}>
+
               <circle
                 cx={x}
                 cy={y}
-                r="6"
-                fill="#06B6D4"
+                r="7"
+                fill="#38BDF8"
+              />
+
+              <circle
+                cx={x}
+                cy={y}
+                r="12"
+                fill="none"
+                stroke="#38BDF8"
+                opacity="0.25"
               />
 
               <text
                 x={x}
                 y={height - 10}
                 textAnchor="middle"
-                fill="#CBD5E1"
+                fill="#94A3B8"
                 fontSize="12"
               >
                 {d.month}
@@ -116,16 +145,18 @@ export default function SpendingChart() {
 
               <text
                 x={x}
-                y={y - 12}
+                y={y - 15}
                 textAnchor="middle"
                 fill="#FFFFFF"
                 fontSize="12"
               >
                 ₹{d.value}M
               </text>
+
             </g>
           );
         })}
+
       </svg>
 
     </div>

@@ -1,10 +1,10 @@
 "use client";
 
 const data = [
-  { label: "Infrastructure", value: 40, color: "#06B6D4" },
+  { label: "Infrastructure", value: 40, color: "#38BDF8" },
   { label: "Healthcare", value: 20, color: "#3B82F6" },
-  { label: "Education", value: 15, color: "#8B5CF6" },
-  { label: "Transport", value: 15, color: "#10B981" },
+  { label: "Education", value: 15, color: "#818CF8" },
+  { label: "Transport", value: 15, color: "#22C55E" },
   { label: "Others", value: 10, color: "#F59E0B" },
 ];
 
@@ -15,6 +15,7 @@ function polarToCartesian(
   angle: number
 ) {
   const rad = ((angle - 90) * Math.PI) / 180;
+
   return {
     x: cx + r * Math.cos(rad),
     y: cy + r * Math.sin(rad),
@@ -31,7 +32,8 @@ function describeArc(
   const start = polarToCartesian(cx, cy, r, endAngle);
   const end = polarToCartesian(cx, cy, r, startAngle);
 
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  const largeArcFlag =
+    endAngle - startAngle <= 180 ? "0" : "1";
 
   return [
     "M",
@@ -52,18 +54,31 @@ export default function BudgetPieChart() {
   let startAngle = 0;
 
   return (
-    <div className="rounded-2xl border border-cyan-500/20 bg-[#07131F] p-6 shadow-xl">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-white">
-          Budget Allocation
-        </h2>
+    <div className="rounded-2xl border border-slate-800 bg-[#0B1117] p-6 shadow-lg">
 
-        <p className="text-sm text-slate-400">
-          Government expenditure by category
-        </p>
+      {/* Header */}
+
+      <div className="mb-6 flex items-center justify-between">
+
+        <div>
+          <h2 className="text-xl font-bold text-white">
+            Budget Allocation
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-400">
+            Government expenditure by category
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-cyan-500/10 px-3 py-1 text-sm font-semibold text-cyan-400">
+          FY 2026
+        </div>
+
       </div>
 
-      <div className="flex flex-col items-center lg:flex-row lg:justify-between gap-8">
+      <div className="flex flex-col items-center gap-8 lg:flex-row lg:justify-between">
+
+        {/* Pie Chart */}
 
         <svg
           width="260"
@@ -73,7 +88,9 @@ export default function BudgetPieChart() {
           <g transform="translate(130,130)">
 
             {data.map((item) => {
-              const sweep = (item.value / 100) * 360;
+
+              const sweep =
+                (item.value / 100) * 360;
 
               const path = describeArc(
                 0,
@@ -83,7 +100,6 @@ export default function BudgetPieChart() {
                 startAngle + sweep
               );
 
-              const currentStart = startAngle;
               startAngle += sweep;
 
               return (
@@ -100,9 +116,9 @@ export default function BudgetPieChart() {
 
             <text
               textAnchor="middle"
-              y="-5"
+              y="-8"
               fill="white"
-              fontSize="26"
+              fontSize="28"
               fontWeight="bold"
             >
               ₹2.4B
@@ -110,7 +126,7 @@ export default function BudgetPieChart() {
 
             <text
               textAnchor="middle"
-              y="20"
+              y="18"
               fill="#94A3B8"
               fontSize="13"
             >
@@ -120,13 +136,16 @@ export default function BudgetPieChart() {
           </g>
         </svg>
 
-        <div className="space-y-4">
+        {/* Legend */}
+
+        <div className="w-full space-y-3">
 
           {data.map((item) => (
             <div
               key={item.label}
-              className="flex items-center justify-between gap-8 rounded-lg bg-slate-900 px-4 py-3"
+              className="flex items-center justify-between rounded-xl border border-slate-800 bg-[#111827] px-4 py-3"
             >
+
               <div className="flex items-center gap-3">
 
                 <div
@@ -136,7 +155,7 @@ export default function BudgetPieChart() {
                   }}
                 />
 
-                <span className="text-white">
+                <span className="text-sm font-medium text-white">
                   {item.label}
                 </span>
 
@@ -152,6 +171,45 @@ export default function BudgetPieChart() {
         </div>
 
       </div>
+
+      {/* Summary */}
+
+      <div className="mt-8 grid grid-cols-2 gap-4">
+
+        <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
+
+          <p className="text-sm text-slate-400">
+            Largest Allocation
+          </p>
+
+          <h3 className="mt-2 text-lg font-bold text-cyan-400">
+            Infrastructure
+          </h3>
+
+          <p className="mt-1 text-xs text-slate-500">
+            40% of Total Budget
+          </p>
+
+        </div>
+
+        <div className="rounded-xl border border-slate-800 bg-[#111827] p-5">
+
+          <p className="text-sm text-slate-400">
+            Categories
+          </p>
+
+          <h3 className="mt-2 text-lg font-bold text-green-400">
+            {data.length}
+          </h3>
+
+          <p className="mt-1 text-xs text-slate-500">
+            Budget Segments
+          </p>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }

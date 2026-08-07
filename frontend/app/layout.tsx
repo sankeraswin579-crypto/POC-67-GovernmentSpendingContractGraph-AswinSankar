@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
   title: "Government Spending Dashboard",
@@ -14,13 +13,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <div className="flex min-h-screen">
-          <Sidebar />
-          <main className="flex-1 p-6 bg-gray-100">
-            {children}
-          </main>
-        </div>
+      <body className="bg-[#030712] text-white">
+        {children}
       </body>
     </html>
   );
