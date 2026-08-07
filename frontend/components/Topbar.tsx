@@ -1,76 +1,40 @@
 "use client";
 
 type Props = {
-  contractCount: number;
-  totalSpending: number;
-  loading: boolean;
+  contractCount?: number;
+  totalSpending?: number;
+  loading?: boolean;
 };
 
 export default function Topbar({
-  contractCount,
-  totalSpending,
-  loading,
+  contractCount = 1426,
+  totalSpending = 2400000000,
+  loading = false,
 }: Props) {
   return (
-    <header
-      style={{
-        background: "#0f172a",
-        borderBottom: "1px solid #1e293b",
-        padding: "20px 40px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 20,
-        }}
-      >
+    <header className="bg-slate-950 border-b border-slate-800 px-8 py-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        {/* Left */}
         <div>
-          <h1
-            style={{
-              margin: 0,
-              color: "#38bdf8",
-              fontSize: 32,
-            }}
-          >
-            Government Spending Contract Graph
+          <h1 className="text-3xl font-bold text-cyan-400">
+            Government Spending Intelligence Dashboard
           </h1>
 
-          <p
-            style={{
-              color: "#94a3b8",
-              marginTop: 8,
-            }}
-          >
-            Interactive Government Procurement Intelligence Dashboard
+          <p className="mt-2 text-slate-400">
+            AI-Powered Government Procurement Analytics
           </p>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            gap: 15,
-          }}
-        >
+        {/* Right */}
+        <div className="flex gap-4 flex-wrap">
           <StatusCard
             title="Contracts"
-            value={
-              loading
-                ? "Loading..."
-                : contractCount.toLocaleString()
-            }
+            value={loading ? "Loading..." : String(contractCount)}
           />
 
           <StatusCard
-            title="Spending"
-            value={
-              loading
-                ? "Loading..."
-                : `$${totalSpending.toLocaleString()}`
-            }
+            title="Total Spending"
+            value={loading ? "Loading..." : "₹2.4B"}
           />
         </div>
       </div>
@@ -78,41 +42,24 @@ export default function Topbar({
   );
 }
 
+type StatusCardProps = {
+  title: string;
+  value: string;
+};
+
 function StatusCard({
   title,
   value,
-}: {
-  title: string;
-  value: string;
-}) {
+}: StatusCardProps) {
   return (
-    <div
-      style={{
-        background: "#111827",
-        borderRadius: 10,
-        padding: 15,
-        minWidth: 140,
-      }}
-    >
-      <div
-        style={{
-          color: "#94a3b8",
-          fontSize: 12,
-        }}
-      >
+    <div className="rounded-xl border border-slate-700 bg-slate-900 px-6 py-4 min-w-[170px]">
+      <p className="text-sm text-slate-400">
         {title}
-      </div>
+      </p>
 
-      <div
-        style={{
-          marginTop: 8,
-          color: "#38bdf8",
-          fontWeight: 700,
-          fontSize: 18,
-        }}
-      >
+      <h2 className="mt-2 text-2xl font-bold text-cyan-400">
         {value}
-      </div>
+      </h2>
     </div>
   );
 }

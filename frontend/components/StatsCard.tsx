@@ -3,20 +3,24 @@
 type Props = {
   title: string;
   value: string | number;
+  change?: string;
   color?: string;
 };
 
 export default function StatsCard({
   title,
   value,
+  change,
   color = "#38bdf8",
 }: Props) {
   return (
     <div
       style={{
         background: "#0f172a",
-        padding: 20,
+        border: "1px solid #1e293b",
         borderRadius: 12,
+        padding: 20,
+        minHeight: 120,
       }}
     >
       <div
@@ -31,13 +35,29 @@ export default function StatsCard({
       <div
         style={{
           marginTop: 12,
-          fontSize: 32,
-          color,
+          fontSize: 30,
           fontWeight: 700,
+          color,
         }}
       >
         {value}
       </div>
+
+      {change && (
+        <div
+          style={{
+            marginTop: 10,
+            fontSize: 13,
+            color:
+              change.startsWith("-")
+                ? "#ef4444"
+                : "#22c55e",
+            fontWeight: 600,
+          }}
+        >
+          {change}
+        </div>
+      )}
     </div>
   );
 }

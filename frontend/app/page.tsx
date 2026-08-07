@@ -1,223 +1,116 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-
-import API from "@/lib/api";
-
 import Topbar from "@/components/Topbar";
-import StatsCard from "@/components/StatsCard";
 import FilterPanel from "@/components/FilterPanel";
-import GraphStage from "@/components/GraphStage";
+
+import StatsCard from "@/components/StatsCard";
+
 import SpendingChart from "@/components/SpendingChart";
+import BudgetPieChart from "@/components/BudgetPieChart";
+import DepartmentBarChart from "@/components/DepartmentBarChart";
+import SupplierChart from "@/components/SupplierChart";
+
 import MapStage from "@/components/MapStage";
+import GraphStage from "@/components/GraphStage";
+
+import RecentContractsTable from "@/components/RecentContractsTable";
+
 import IntelligencePanel from "@/components/IntelligencePanel";
 
-export type Contract = {
-  agency: string;
-  vendor: string;
-  contract_title: string;
-  amount: number;
-  year: number;
-  state: string;
-};
-
-type Summary = {
-  total_contracts: number;
-  total_spending: number;
-  agencies: number;
-  vendors: number;
-};
-
-type Filters = {
-  search: string;
-  agency: string;
-  vendor: string;
-  state: string;
-  year: string;
-};
-
-export default function HomePage() {
-  const [contracts, setContracts] = useState<Contract[]>([]);
-
-  const [summary, setSummary] = useState<Summary>({
-    total_contracts: 0,
-    total_spending: 0,
-    agencies: 0,
-    vendors: 0,
-  });
-
-  const [loading, setLoading] = useState(true);
-
-  const [filters, setFilters] = useState<Filters>({
-    search: "",
-    agency: "",
-    vendor: "",
-    state: "",
-    year: "",
-  });
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const [summaryRes, contractsRes] = await Promise.all([
-          fetch(`${API}/api/summary`),
-          fetch(`${API}/api/contracts`),
-        ]);
-
-        if (!summaryRes.ok || !contractsRes.ok) {
-          throw new Error("Failed to load API data.");
-        }
-
-        setSummary(await summaryRes.json());
-        setContracts(await contractsRes.json());
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
-  }, []);
-
-  const filteredContracts = useMemo(() => {
-    return contracts.filter((contract) => {
-      if (
-        filters.search &&
-        !(
-          contract.contract_title
-            .toLowerCase()
-            .includes(filters.search.toLowerCase()) ||
-          contract.agency
-            .toLowerCase()
-            .includes(filters.search.toLowerCase()) ||
-          contract.vendor
-            .toLowerCase()
-            .includes(filters.search.toLowerCase())
-        )
-      )
-        return false;
-
-      if (
-        filters.agency &&
-        contract.agency !== filters.agency
-      )
-        return false;
-
-      if (
-        filters.vendor &&
-        contract.vendor !== filters.vendor
-      )
-        return false;
-
-      if (
-        filters.state &&
-        contract.state !== filters.state
-      )
-        return false;
-
-      if (
-        filters.year &&
-        String(contract.year) !== filters.year
-      )
-        return false;
-
-      return true;
-    });
-  }, [contracts, filters]);
-
-  const totalSpending = filteredContracts.reduce(
-    (sum, contract) => sum + contract.amount,
-    0
-  );
-
+export default function Home() {
   return (
-    <main
-      style={{
-        background: "#020617",
-        minHeight: "100vh",
-      }}
-    >
-      <Topbar
-        contractCount={filteredContracts.length}
-        totalSpending={totalSpending}
-        loading={loading}
-      />
+    <main className="min-h-screen bg-[#020617]">
 
-      <div
-        style={{
-          maxWidth: "1700px",
-          margin: "0 auto",
-          padding: "30px",
-        }}
-      >
-        <FilterPanel
-          contracts={contracts}
-          onFilterChange={setFilters}
-        />
+      {/* Top Navigation */}
+      <Topbar />
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(220px,1fr))",
-            gap: 20,
-            marginBottom: 30,
-          }}
-        >
+      <div className="mx-auto max-w-7xl space-y-6 p-6">
+
+        {/* Filters */}
+        <FilterPanel />
+
+        {/* KPI Cards */}
+        <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+
+          <StatsCard
+            title="Total Budget"
+            value="₹2.4B"
+            change="+12%"
+          />
+
+          <StatsCard
+            title="Departments"
+            value="24"
+            change="+2"
+          />
+
+          <StatsCard
+            title="Suppliers"
+            value="318"
+            change="+18"
+          />
+
           <StatsCard
             title="Contracts"
-            value={filteredContracts.length}
-            color="#38bdf8"
+            value="1,426"
+            change="+8%"
           />
 
           <StatsCard
-            title="Total Spending"
-            value={`$${totalSpending.toLocaleString()}`}
-            color="#22c55e"
+            title="Projects"
+            value="87"
+            change="+4"
           />
 
           <StatsCard
-            title="Agencies"
-            value={
-              new Set(
-                filteredContracts.map(
-                  (c) => c.agency
-                )
-              ).size
-            }
-            color="#f59e0b"
+            title="Risk Alerts"
+            value="12"
+            change="-2"
           />
 
-          <StatsCard
-            title="Vendors"
-            value={
-              new Set(
-                filteredContracts.map(
-                  (c) => c.vendor
-                )
-              ).size
-            }
-            color="#ef4444"
-          />
-        </div>
+        </section>
 
-        <GraphStage
-          contracts={filteredContracts}
-        />
+        {/* Row 1 */}
 
-        <SpendingChart
-          contracts={filteredContracts}
-        />
+        <section className="grid gap-6 lg:grid-cols-2">
 
-        <MapStage
-          contracts={filteredContracts}
-        />
+          <SpendingChart />
 
-        <IntelligencePanel
-          contracts={filteredContracts}
-        />
+          <BudgetPieChart />
+
+        </section>
+
+        {/* Row 2 */}
+
+        <section className="grid gap-6 lg:grid-cols-2">
+
+          <DepartmentBarChart />
+
+          <SupplierChart />
+
+        </section>
+
+        {/* Row 3 */}
+
+        <section className="grid gap-6 lg:grid-cols-2">
+
+          <MapStage />
+
+          <GraphStage />
+
+        </section>
+
+        {/* Contracts */}
+
+        <RecentContractsTable />
+
+
+        {/* AI */}
+
+        <IntelligencePanel />
+
       </div>
+
     </main>
   );
 }

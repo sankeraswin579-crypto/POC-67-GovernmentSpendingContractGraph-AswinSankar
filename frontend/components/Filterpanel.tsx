@@ -20,13 +20,13 @@ type FilterValues = {
 };
 
 type Props = {
-  contracts: Contract[];
-  onFilterChange: (filters: FilterValues) => void;
+  contracts?: Contract[];
+  onFilterChange?: (filters: FilterValues) => void;
 };
 
 export default function FilterPanel({
-  contracts,
-  onFilterChange,
+  contracts = [],
+  onFilterChange = () => {},
 }: Props) {
   const [filters, setFilters] = useState<FilterValues>({
     search: "",
@@ -101,65 +101,63 @@ export default function FilterPanel({
         <input
           placeholder="Search..."
           value={filters.search}
-          onChange={(e) =>
-            update("search", e.target.value)
-          }
+          onChange={(e) => update("search", e.target.value)}
           style={style}
         />
 
         <select
           value={filters.agency}
-          onChange={(e) =>
-            update("agency", e.target.value)
-          }
+          onChange={(e) => update("agency", e.target.value)}
           style={style}
         >
           <option value="">All Agencies</option>
 
           {agencies.map((agency) => (
-            <option key={agency}>{agency}</option>
+            <option key={agency} value={agency}>
+              {agency}
+            </option>
           ))}
         </select>
 
         <select
           value={filters.vendor}
-          onChange={(e) =>
-            update("vendor", e.target.value)
-          }
+          onChange={(e) => update("vendor", e.target.value)}
           style={style}
         >
           <option value="">All Vendors</option>
 
           {vendors.map((vendor) => (
-            <option key={vendor}>{vendor}</option>
+            <option key={vendor} value={vendor}>
+              {vendor}
+            </option>
           ))}
         </select>
 
         <select
           value={filters.state}
-          onChange={(e) =>
-            update("state", e.target.value)
-          }
+          onChange={(e) => update("state", e.target.value)}
           style={style}
         >
           <option value="">All States</option>
 
           {states.map((state) => (
-            <option key={state}>{state}</option>
+            <option key={state} value={state}>
+              {state}
+            </option>
           ))}
         </select>
 
         <select
           value={filters.year}
-          onChange={(e) =>
-            update("year", e.target.value)
-          }
+          onChange={(e) => update("year", e.target.value)}
           style={style}
         >
           <option value="">All Years</option>
 
           {years.map((year) => (
-            <option key={year}>{year}</option>
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
       </div>

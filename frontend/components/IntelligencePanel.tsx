@@ -1,103 +1,119 @@
 "use client";
 
-import {
-  MapContainer,
-  TileLayer,
-  CircleMarker,
-  Popup,
-} from "react-leaflet";
+import { Brain } from "lucide-react";
 
-import "leaflet/dist/leaflet.css";
+export default function IntelligencePanel() {
+  const questions = [
+    "Which department has the highest spending?",
+    "Which supplier received the most contracts?",
+    "Which state has the highest expenditure?",
+    "Which contracts should be audited?",
+    "Which agencies exceeded budget?",
+    "Where are procurement risks concentrated?",
+    "Which projects show unusual spending?",
+    "How can spending efficiency be improved?",
+  ];
 
-type Contract = {
-  agency: string;
-  vendor: string;
-  contract_title: string;
-  amount: number;
-  year: number;
-  state: string;
-};
-
-type Props = {
-  contracts: Contract[];
-};
-
-const stateCoordinates: Record<
-  string,
-  [number, number]
-> = {
-  California: [36.7783, -119.4179],
-  Texas: [31.9686, -99.9018],
-  Florida: [27.6648, -81.5158],
-  NewYork: [42.9134, -75.5963],
-  Illinois: [40.6331, -89.3985],
-  Georgia: [32.1574, -82.9071],
-  Washington: [47.7511, -120.7401],
-  Colorado: [39.5501, -105.7821],
-};
-
-export default function MapView({
-  contracts,
-}: Props) {
   return (
-    <MapContainer
-      center={[39.5, -98.35]}
-      zoom={4}
-      style={{
-        width: "100%",
-        height: "600px",
-        borderRadius: 12,
-      }}
-    >
-      <TileLayer
-        attribution="© OpenStreetMap contributors"
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+    <div className="rounded-xl border border-cyan-700 bg-slate-900 p-6">
 
-      {contracts.map((contract, index) => {
-        const position =
-          stateCoordinates[contract.state];
+      <div className="flex items-center gap-3 mb-6">
+        <Brain className="text-cyan-400" size={28} />
 
-        if (!position) return null;
+        <h2 className="text-2xl font-bold text-white">
+          AI Intelligence Layer
+        </h2>
+      </div>
 
-        return (
-          <CircleMarker
-            key={index}
-            center={position}
-            radius={8}
-            pathOptions={{
-              color: "#38bdf8",
-              fillColor: "#22c55e",
-              fillOpacity: 0.8,
-            }}
+      <div className="rounded-lg bg-slate-800 p-5 mb-6">
+        <h3 className="text-cyan-400 font-semibold mb-3">
+          Executive Summary
+        </h3>
+
+        <p className="text-slate-300">
+          Government spending is primarily concentrated in
+          infrastructure and transportation. AI analysis suggests
+          monitoring high-value procurement contracts and departments
+          approaching budget limits.
+        </p>
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+
+        <div className="rounded-lg bg-slate-800 p-4">
+          <h4 className="text-cyan-400 font-semibold">
+            Top Department
+          </h4>
+
+          <p className="text-white mt-2">
+            Infrastructure
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-slate-800 p-4">
+          <h4 className="text-cyan-400 font-semibold">
+            Top Supplier
+          </h4>
+
+          <p className="text-white mt-2">
+            ABC Engineering Ltd.
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-slate-800 p-4">
+          <h4 className="text-cyan-400 font-semibold">
+            Audit Candidates
+          </h4>
+
+          <p className="text-white mt-2">
+            12 Contracts
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-slate-800 p-4">
+          <h4 className="text-cyan-400 font-semibold">
+            Budget Alerts
+          </h4>
+
+          <p className="text-white mt-2">
+            3 Departments
+          </p>
+        </div>
+
+      </div>
+
+      <h3 className="text-cyan-400 text-lg font-semibold mb-4">
+        Business Intelligence Questions
+      </h3>
+
+      <div className="grid gap-3">
+        {questions.map((q, i) => (
+          <div
+            key={i}
+            className="rounded-lg border border-slate-700 bg-slate-800 p-4"
           >
-            <Popup>
-              <strong>{contract.contract_title}</strong>
+            <span className="text-cyan-400 font-bold">
+              Q{i + 1}.
+            </span>{" "}
+            <span className="text-slate-300">
+              {q}
+            </span>
+          </div>
+        ))}
+      </div>
 
-              <br />
-              <br />
+      <div className="mt-6 rounded-lg border border-green-600 bg-green-950/20 p-5">
+        <h3 className="text-green-400 font-semibold mb-3">
+          AI Recommendation
+        </h3>
 
-              Agency:
-              <br />
-              {contract.agency}
+        <p className="text-slate-300">
+          Prioritize audits of high-value contracts, monitor
+          departments nearing budget limits, and distribute future
+          investments more evenly across regions.
+        </p>
+      </div>
 
-              <br />
-              <br />
-
-              Vendor:
-              <br />
-              {contract.vendor}
-
-              <br />
-              <br />
-
-              Amount:
-              <br />$
-              {contract.amount.toLocaleString()}
-            </Popup>
-          </CircleMarker>
-        );
-      })}
-    </MapContainer>
+    </div>
   );
 }
