@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-
 import "./globals.css";
-import "leaflet/dist/leaflet.css";
+import type { Metadata } from "next";
+import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Government Spending Contract Graph",
-  description:
-    "Interactive Government Spending Intelligence Dashboard",
+  title: "Government Spending Dashboard",
+  description: "AI-powered Government Spending Intelligence",
 };
 
 export default function RootLayout({
@@ -16,7 +14,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 p-6 bg-gray-100">
+            {children}
+          </main>
+        </div>
+      </body>
     </html>
   );
 }

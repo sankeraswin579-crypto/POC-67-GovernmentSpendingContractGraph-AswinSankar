@@ -1,116 +1,81 @@
-"use client";
-
 import Topbar from "@/components/Topbar";
-import FilterPanel from "@/components/FilterPanel";
-
 import StatsCard from "@/components/StatsCard";
-
+import FilterPanel from "@/components/FilterPanel";
 import SpendingChart from "@/components/SpendingChart";
-import BudgetPieChart from "@/components/BudgetPieChart";
-import DepartmentBarChart from "@/components/DepartmentBarChart";
 import SupplierChart from "@/components/SupplierChart";
+import DepartmentBarChart from "@/components/DepartmentBarChart";
+import BudgetPieChart from "@/components/BudgetPieChart";
 
-import MapStage from "@/components/MapStage";
 import GraphStage from "@/components/GraphStage";
-
 import RecentContractsTable from "@/components/RecentContractsTable";
-
 import IntelligencePanel from "@/components/IntelligencePanel";
+import QuestionCard from "@/components/QuestionCard";
+import InsightCard from "@/components/InsightCard";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#020617]">
+    <div className="min-h-screen bg-slate-100">
 
       {/* Top Navigation */}
       <Topbar />
 
-      <div className="mx-auto max-w-7xl space-y-6 p-6">
+      <div className="space-y-6 p-6">
+
+        {/* Dashboard Heading */}
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Government Spending Intelligence Dashboard
+          </h1>
+
+          <p className="text-slate-500 mt-2">
+            Analyze contracts, suppliers, agencies and procurement spending with AI-powered intelligence.
+          </p>
+        </div>
 
         {/* Filters */}
         <FilterPanel />
 
-        {/* KPI Cards */}
-        <section className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        {/* Statistics */}
+        <StatsCard />
 
-          <StatsCard
-            title="Total Budget"
-            value="₹2.4B"
-            change="+12%"
-          />
-
-          <StatsCard
-            title="Departments"
-            value="24"
-            change="+2"
-          />
-
-          <StatsCard
-            title="Suppliers"
-            value="318"
-            change="+18"
-          />
-
-          <StatsCard
-            title="Contracts"
-            value="1,426"
-            change="+8%"
-          />
-
-          <StatsCard
-            title="Projects"
-            value="87"
-            change="+4"
-          />
-
-          <StatsCard
-            title="Risk Alerts"
-            value="12"
-            change="-2"
-          />
-
-        </section>
-
-        {/* Row 1 */}
-
-        <section className="grid gap-6 lg:grid-cols-2">
-
+        {/* Charts */}
+        <div className="grid gap-6 lg:grid-cols-2">
           <SpendingChart />
-
-          <BudgetPieChart />
-
-        </section>
-
-        {/* Row 2 */}
-
-        <section className="grid gap-6 lg:grid-cols-2">
-
-          <DepartmentBarChart />
-
           <SupplierChart />
+        </div>
 
-        </section>
+        {/* More Analytics */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <DepartmentBarChart />
+          <BudgetPieChart />
+        </div>
 
-        {/* Row 3 */}
-
-        <section className="grid gap-6 lg:grid-cols-2">
-
-          <MapStage />
-
+        {/* Geographic + Network */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <MapView />
           <GraphStage />
+        </div>
 
-        </section>
+        {/* AI Intelligence */}
+        <div className="space-y-6">
+
+          <h2 className="text-2xl font-bold">
+            🤖 AI Intelligence
+          </h2>
+
+          <IntelligencePanel />
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <InsightCard />
+            <QuestionCard />
+          </div>
+
+        </div>
 
         {/* Contracts */}
-
         <RecentContractsTable />
 
-
-        {/* AI */}
-
-        <IntelligencePanel />
-
       </div>
-
-    </main>
+    </div>
   );
 }
