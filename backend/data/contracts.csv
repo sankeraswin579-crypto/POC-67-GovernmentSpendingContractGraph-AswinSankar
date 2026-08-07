@@ -1,0 +1,31 @@
+agency,vendor,contract_title,amount,year,state
+Department of Transportation,ABC Infrastructure,Road Construction Phase I,1500000,2024,Texas
+Department of Transportation,Highway Builders Ltd,Bridge Rehabilitation,2200000,2024,Texas
+Department of Transportation,City Roads Inc,Highway Expansion,1750000,2023,Florida
+Health Department,MedEquip Solutions,Medical Equipment Supply,900000,2023,California
+Health Department,HealthTech Systems,Hospital Software Upgrade,1250000,2024,California
+Health Department,Pharma Logistics,Vaccine Distribution,3100000,2024,New York
+Education Board,Tech Systems,School Computer Procurement,600000,2024,Florida
+Education Board,Digital Learning Inc,Smart Classroom Initiative,1400000,2023,Georgia
+Education Board,Campus Networks,University WiFi Upgrade,1800000,2024,Virginia
+Department of Defense,LockSecure Ltd,Military Vehicle Maintenance,5200000,2024,Virginia
+Department of Defense,Aero Defense Corp,Drone Surveillance Systems,8700000,2023,Texas
+Department of Defense,National Security Tech,Cybersecurity Platform,4600000,2024,Maryland
+Department of Energy,Green Power Ltd,Solar Plant Installation,3800000,2024,Arizona
+Department of Energy,Wind Solutions,Wind Farm Expansion,4200000,2023,Oklahoma
+Department of Energy,Power Grid Systems,Grid Modernization,5600000,2024,Colorado
+Department of Agriculture,Agri Solutions,Irrigation Modernization,950000,2024,Kansas
+Department of Agriculture,Farm Technologies,Precision Farming Program,1450000,2023,Iowa
+Department of Agriculture,Green Harvest Co,Agricultural Equipment Supply,1150000,2024,Nebraska
+Department of Justice,Secure IT,Digital Evidence Platform,2300000,2024,Washington
+Department of Justice,Justice Systems,Court Management Software,1800000,2023,Illinois
+Department of Homeland Security,Safe Borders Inc,Border Surveillance Equipment,6200000,2024,Arizona
+Department of Homeland Security,Emergency Response Tech,Emergency Communication Network,2950000,2023,Florida
+Department of Commerce,Business Analytics Ltd,Economic Data Platform,1650000,2024,New York
+Department of Commerce,CloudGov Services,Government Cloud Migration,3900000,2024,Virginia
+Environmental Protection Agency,EcoClean Systems,Water Quality Monitoring,2100000,2024,Oregon
+Environmental Protection Agency,Green Analytics,Air Pollution Monitoring,2450000,2023,California
+NASA,SpaceTech Industries,Satellite Communication System,9800000,2024,Florida
+NASA,Orbital Engineering,Launch Vehicle Components,11200000,2023,Texas
+Veterans Affairs,Medical Care Solutions,Hospital Modernization,2700000,2024,Ohio
+Veterans Affairs,Health Support Inc,Electronic Medical Records,1900000,2023,Pennsylvania

@@ -1,138 +1,177 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useMemo, useState } from "react";
 
-type FilterState = {
-  level: string;
-  region: string[];
-  operator: string;
+export type Contract = {
+  agency: string;
+  vendor: string;
+  contract_title: string;
+  amount: number;
+  year: number;
+  state: string;
 };
 
-type CountryOption = {
-  country_id: number;
-  country_name: string;
+type FilterValues = {
+  search: string;
+  agency: string;
+  vendor: string;
+  state: string;
+  year: string;
 };
 
 type Props = {
-  filters?: FilterState;
-  onChange?: (filters: FilterState) => void;
-  countryOptions?: CountryOption[];
+  contracts: Contract[];
+  onFilterChange: (filters: FilterValues) => void;
 };
 
 export default function FilterPanel({
-  filters = { level: "ALL", region: [], operator: "" },
-  onChange = () => {},
-  countryOptions = [],
+  contracts,
+  onFilterChange,
 }: Props) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [filters, setFilters] = useState<FilterValues>({
+    search: "",
+    agency: "",
+    vendor: "",
+    state: "",
+    year: "",
+  });
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const agencies = useMemo(
+    () =>
+      [...new Set(contracts.map((c) => c.agency))].sort(),
+    [contracts]
+  );
 
-  const filteredCountries = useMemo(() => {
-    return countryOptions.filter((c) =>
-      c.country_name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [countryOptions, searchTerm]);
+  const vendors = useMemo(
+    () =>
+      [...new Set(contracts.map((c) => c.vendor))].sort(),
+    [contracts]
+  );
 
-  // ✅ SINGLE SELECT (minimal change)
-  const toggleCountry = (id: string) => {
-    onChange({
+  const states = useMemo(
+    () =>
+      [...new Set(contracts.map((c) => c.state))].sort(),
+    [contracts]
+  );
+
+  const years = useMemo(
+    () =>
+      [...new Set(contracts.map((c) => c.year))]
+        .sort((a, b) => b - a)
+        .map(String),
+    [contracts]
+  );
+
+  function update(name: keyof FilterValues, value: string) {
+    const next = {
       ...filters,
-      region: filters.region.includes(id) ? [] : [id],
-    });
-  };
+      [name]: value,
+    };
 
-  const selectedCount = filters.region.length;
-
-  const selectedLabel = useMemo(() => {
-    if (selectedCount === 0) return "Select Country";
-
-    const selected = countryOptions.find(
-      (c) => String(c.country_id) === filters.region[0]
-    );
-
-    return selected?.country_name || "Select Country";
-  }, [filters.region, countryOptions]);
+    setFilters(next);
+    onFilterChange(next);
+  }
 
   return (
-    <div className="bg-[#071019]/90 backdrop-blur-xl border border-cyan-500/20 px-5 py-4 rounded-2xl flex gap-4 items-center z-50 shadow-[0_0_30px_rgba(34,211,238,.18)]">
-        
-      <div className="relative" ref={dropdownRef}>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`text-xs px-3 py-1.5 rounded-2xl w-56 text-left flex justify-between items-center transition
-          
-          ${
-            selectedCount > 0
-              ? "bg-[#030712] border border-[#38BDF8] text-[#38BDF8] shadow-[0_0_8px_rgba(56,189,248,0.4)]"
-              : "bg-[#030712] border border-[#1F2937] text-[#E5E7EB]"
-          }`}
-        >
-          <span className="truncate">
-            {selectedLabel}
-          </span>
+    <div
+      style={{
+        background: "#0f172a",
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 25,
+      }}
+    >
+      <h2
+        style={{
+          color: "#38bdf8",
+          marginBottom: 20,
+        }}
+      >
+        Filter Contracts
+      </h2>
 
-          <span className="text-[10px] opacity-50">
-            {isOpen ? "▲" : "▼"}
-          </span>
-        </button>
-
-        {isOpen && (
-          <div className="absolute top-11 left-0 w-64 bg-[#071019] border border-cyan-500/20 rounded-2xl shadow-2xl flex flex-col">
-            <input
-              autoFocus
-              placeholder="Search countries..."
-              className="p-2.5 text-xs bg-[#161B22] border-b border-[#1F2937] outline-none text-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-
-            <div className="max-h-60 overflow-y-auto p-1">
-              {filteredCountries.map((c) => {
-                const id = String(c.country_id);
-                return (
-                  <label
-                    key={id}
-                    className="flex items-center gap-2 px-3 py-2 hover:bg-[#1F2937] cursor-pointer text-xs text-gray-300 rounded"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.region.includes(id)}
-                      onChange={() => toggleCountry(id)}
-                      className="accent-[#38BDF8]"
-                    />
-                    {c.country_name}
-                  </label>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ✅ OPERATOR → SAME BLUE STYLE WHEN ACTIVE */}
-      <input
-        placeholder="Search operator"
-        value={filters.operator}
-        onChange={(e) => onChange({ ...filters, operator: e.target.value })}
-        className={`text-xs px-3 py-1.5 rounded-2xl w-48 transition-all duration-200
-          ${
-            filters.operator && filters.operator !== ""
-              ? "bg-[#030712] border border-[#38BDF8] text-[#38BDF8] shadow-[0_0_8px_rgba(56,189,248,0.4)]"
-              : "bg-[#030712] border border-[#1F2937] text-[#E5E7EB]"
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit,minmax(220px,1fr))",
+          gap: 15,
+        }}
+      >
+        <input
+          placeholder="Search..."
+          value={filters.search}
+          onChange={(e) =>
+            update("search", e.target.value)
           }
-        `}
-      />
+          style={style}
+        />
+
+        <select
+          value={filters.agency}
+          onChange={(e) =>
+            update("agency", e.target.value)
+          }
+          style={style}
+        >
+          <option value="">All Agencies</option>
+
+          {agencies.map((agency) => (
+            <option key={agency}>{agency}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.vendor}
+          onChange={(e) =>
+            update("vendor", e.target.value)
+          }
+          style={style}
+        >
+          <option value="">All Vendors</option>
+
+          {vendors.map((vendor) => (
+            <option key={vendor}>{vendor}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.state}
+          onChange={(e) =>
+            update("state", e.target.value)
+          }
+          style={style}
+        >
+          <option value="">All States</option>
+
+          {states.map((state) => (
+            <option key={state}>{state}</option>
+          ))}
+        </select>
+
+        <select
+          value={filters.year}
+          onChange={(e) =>
+            update("year", e.target.value)
+          }
+          style={style}
+        >
+          <option value="">All Years</option>
+
+          {years.map((year) => (
+            <option key={year}>{year}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
+
+const style: React.CSSProperties = {
+  padding: 12,
+  borderRadius: 8,
+  border: "1px solid #334155",
+  background: "#1e293b",
+  color: "white",
+  fontSize: 14,
+};

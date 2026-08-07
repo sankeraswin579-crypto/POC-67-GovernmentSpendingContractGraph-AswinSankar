@@ -1,26 +1,22 @@
-import "./globals.css";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "EV Rail Intelligence",
-  description: "Global EV Charging Network",
+import "./globals.css";
+import "leaflet/dist/leaflet.css";
+
+export const metadata: Metadata = {
+  title: "Government Spending Contract Graph",
+  description:
+    "Interactive Government Spending Intelligence Dashboard",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css"
-          rel="stylesheet"
-        />
-      </head>
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

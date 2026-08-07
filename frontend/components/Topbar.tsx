@@ -1,111 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+type Props = {
+  contractCount: number;
+  totalSpending: number;
+  loading: boolean;
+};
 
-interface TopbarProps {
-  stationCount: number;
-  dataSource: string;
-  isLoading: boolean;
-}
-
-export function Topbar({
-  stationCount,
-  dataSource,
-  isLoading,
-}: TopbarProps) {
-
-  const [time, setTime] = useState("");
-
-  useEffect(() => {
-    const update = () =>
-      setTime(
-        new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        })
-      );
-
-    update();
-
-    const timer = setInterval(update, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
+export default function Topbar({
+  contractCount,
+  totalSpending,
+  loading,
+}: Props) {
   return (
-    <header className="relative h-24 overflow-hidden border-b border-cyan-500/30 bg-gradient-to-r from-[#030712] via-[#071827] to-[#020617] shadow-[0_0_40px_rgba(34,211,238,.25)]">
+    <header
+      style={{
+        background: "#0f172a",
+        borderBottom: "1px solid #1e293b",
+        padding: "20px 40px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 20,
+        }}
+      >
+        <div>
+          <h1
+            style={{
+              margin: 0,
+              color: "#38bdf8",
+              fontSize: 32,
+            }}
+          >
+            Government Spending Contract Graph
+          </h1>
 
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22d3ee15,transparent_70%)]" />
-
-      <div className="relative z-10 flex h-full items-center justify-between px-8">
-
-        {/* LEFT */}
-
-        <div className="flex items-center gap-5">
-
-          <div className="relative">
-
-            <div className="h-5 w-5 rounded-full bg-cyan-400 animate-pulse" />
-
-            <div className="absolute inset-0 rounded-full border border-cyan-300 animate-ping" />
-
-          </div>
-
-          <div>
-
-            <p className="text-xs uppercase tracking-[6px] text-cyan-300">
-              Global EV Command Center
-            </p>
-
-            <h1 className="text-4xl font-black tracking-[6px] text-white">
-              ELECTRIC HORIZON
-            </h1>
-
-            <p className="text-sm tracking-[4px] text-slate-400 uppercase">
-              Real-Time EV Intelligence Platform
-            </p>
-
-          </div>
-
+          <p
+            style={{
+              color: "#94a3b8",
+              marginTop: 8,
+            }}
+          >
+            Interactive Government Procurement Intelligence Dashboard
+          </p>
         </div>
 
-        {/* RIGHT */}
-
-        <div className="flex gap-4">
-
+        <div
+          style={{
+            display: "flex",
+            gap: 15,
+          }}
+        >
           <StatusCard
-            title="Stations"
+            title="Contracts"
             value={
-              isLoading
+              loading
                 ? "Loading..."
-                : stationCount.toLocaleString()
+                : contractCount.toLocaleString()
             }
           />
 
           <StatusCard
-            title="Source"
+            title="Spending"
             value={
-              dataSource === "OpenChargeMap"
-                ? "OCM LIVE"
-                : "LOCAL"
+              loading
+                ? "Loading..."
+                : `$${totalSpending.toLocaleString()}`
             }
           />
-
-          <StatusCard
-            title="Status"
-            value={isLoading ? "SYNCING" : "ONLINE"}
-          />
-
-          <StatusCard
-            title="Local Time"
-            value={time}
-          />
-
         </div>
-
       </div>
-
     </header>
   );
 }
@@ -118,16 +86,33 @@ function StatusCard({
   value: string;
 }) {
   return (
-    <div className="min-w-[130px] rounded-2xl border border-cyan-500/20 bg-[#071019]/90 px-5 py-3 backdrop-blur-xl shadow-[0_0_25px_rgba(34,211,238,.12)] transition-all duration-300 hover:scale-105 hover:border-cyan-300">
-
-      <p className="text-[10px] uppercase tracking-[3px] text-slate-400">
+    <div
+      style={{
+        background: "#111827",
+        borderRadius: 10,
+        padding: 15,
+        minWidth: 140,
+      }}
+    >
+      <div
+        style={{
+          color: "#94a3b8",
+          fontSize: 12,
+        }}
+      >
         {title}
-      </p>
+      </div>
 
-      <p className="mt-1 text-xl font-bold text-cyan-300">
+      <div
+        style={{
+          marginTop: 8,
+          color: "#38bdf8",
+          fontWeight: 700,
+          fontSize: 18,
+        }}
+      >
         {value}
-      </p>
-
+      </div>
     </div>
   );
 }
