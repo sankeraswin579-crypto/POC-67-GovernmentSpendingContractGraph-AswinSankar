@@ -12,7 +12,7 @@ export type Contract = {
   state: string;
 };
 
-type FilterValues = {
+export type FilterValues = {
   search: string;
   agency: string;
   vendor: string;
@@ -38,135 +38,138 @@ export default function FilterPanel({
   });
 
   const agencies = useMemo(
-    () => [...new Set(contracts.map((c) => c.agency))].sort(),
+    () =>
+      [...new Set(contracts.map((contract) => contract.agency))]
+        .filter(Boolean)
+        .sort(),
     [contracts]
   );
 
   const vendors = useMemo(
-    () => [...new Set(contracts.map((c) => c.vendor))].sort(),
+    () =>
+      [...new Set(contracts.map((contract) => contract.vendor))]
+        .filter(Boolean)
+        .sort(),
     [contracts]
   );
 
   const states = useMemo(
-    () => [...new Set(contracts.map((c) => c.state))].sort(),
+    () =>
+      [...new Set(contracts.map((contract) => contract.state))]
+        .filter(Boolean)
+        .sort(),
     [contracts]
   );
 
   const years = useMemo(
     () =>
-      [...new Set(contracts.map((c) => c.year))]
+      [...new Set(contracts.map((contract) => contract.year))]
+        .filter(Boolean)
         .sort((a, b) => b - a)
         .map(String),
     [contracts]
   );
 
-  function update(name: keyof FilterValues, value: string) {
-    const next = {
+  function updateFilter(
+    name: keyof FilterValues,
+    value: string
+  ) {
+    const updatedFilters: FilterValues = {
       ...filters,
       [name]: value,
     };
 
-    setFilters(next);
-    onFilterChange(next);
+    setFilters(updatedFilters);
+    onFilterChange(updatedFilters);
   }
 
   return (
     <div className="space-y-4">
 
       {/* Search */}
-
       <div className="flex items-center gap-3 rounded-xl border border-slate-700 bg-[#030712] px-4 py-3">
-
         <Search
           size={18}
-          className="text-slate-500"
+          className="shrink-0 text-slate-500"
         />
 
         <input
+          type="text"
           placeholder="Search contracts..."
           value={filters.search}
-          onChange={(e) =>
-            update("search", e.target.value)
+          onChange={(event) =>
+            updateFilter("search", event.target.value)
           }
-          className="w-full bg-transparent text-sm text-white placeholder:text-slate-500 outline-none"
+          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-500"
         />
-
       </div>
 
       {/* Agency */}
-
       <select
         value={filters.agency}
-        onChange={(e) =>
-          update("agency", e.target.value)
+        onChange={(event) =>
+          updateFilter("agency", event.target.value)
         }
-        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white"
+        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white outline-none"
       >
         <option value="">All Agencies</option>
 
         {agencies.map((agency) => (
-          <option key={agency}>
+          <option key={agency} value={agency}>
             {agency}
           </option>
         ))}
-
       </select>
 
       {/* Vendor */}
-
       <select
         value={filters.vendor}
-        onChange={(e) =>
-          update("vendor", e.target.value)
+        onChange={(event) =>
+          updateFilter("vendor", event.target.value)
         }
-        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white"
+        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white outline-none"
       >
         <option value="">All Vendors</option>
 
         {vendors.map((vendor) => (
-          <option key={vendor}>
+          <option key={vendor} value={vendor}>
             {vendor}
           </option>
         ))}
-
       </select>
 
       {/* State */}
-
       <select
         value={filters.state}
-        onChange={(e) =>
-          update("state", e.target.value)
+        onChange={(event) =>
+          updateFilter("state", event.target.value)
         }
-        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white"
+        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white outline-none"
       >
         <option value="">All States</option>
 
         {states.map((state) => (
-          <option key={state}>
+          <option key={state} value={state}>
             {state}
           </option>
         ))}
-
       </select>
 
       {/* Year */}
-
       <select
         value={filters.year}
-        onChange={(e) =>
-          update("year", e.target.value)
+        onChange={(event) =>
+          updateFilter("year", event.target.value)
         }
-        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white"
+        className="w-full rounded-xl border border-slate-700 bg-[#030712] p-3 text-sm text-white outline-none"
       >
         <option value="">All Years</option>
 
         {years.map((year) => (
-          <option key={year}>
+          <option key={year} value={year}>
             {year}
           </option>
         ))}
-
       </select>
 
     </div>
