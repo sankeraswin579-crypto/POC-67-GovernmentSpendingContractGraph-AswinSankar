@@ -1,4 +1,4 @@
-import GraphStage from "@/components/GraphStage";
+import GraphStage from "@/components/Graphstage";
 
 export default function NetworkPage() {
   return (
