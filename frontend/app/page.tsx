@@ -37,6 +37,27 @@ export default function Home() {
             <p className="mt-2 text-slate-400">
               AI-powered procurement analytics and spending intelligence.
             </p>
+
+            {/* Developer / Internship Badge */}
+            <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/5 px-4 py-2">
+              <span className="text-sm text-slate-400">
+                Designed & Developed by
+              </span>
+
+              <span className="text-sm font-semibold text-cyan-400">
+                Aswin Sankar P.S.
+              </span>
+
+              <span className="text-slate-600">•</span>
+
+              <span className="text-sm font-medium text-white">
+                AI Engineer Intern — Infocreon
+              </span>
+
+              <span className="text-xs text-slate-500">
+                Real Rails • Batch 7
+              </span>
+            </div>
           </section>
 
           {/* AI Summary */}
@@ -105,6 +126,32 @@ export default function Home() {
 
           {/* Contracts */}
           <RecentContractsTable />
+
+          {/* Developer Signature */}
+          <footer className="mt-8 rounded-2xl border border-cyan-500/20 bg-[#0B1117] px-6 py-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  Government Spending Contract Graph — PoC #67
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  Designed & Developed by{" "}
+                  <span className="font-medium text-cyan-400">
+                    Aswin Sankar P.S.
+                  </span>
+                </p>
+              </div>
+
+              <div className="text-left sm:text-right">
+                <p className="text-sm font-medium text-white">
+                  AI Engineer Intern — Infocreon
+                </p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Real Rails Internship • Batch 7
+                </p>
+              </div>
+            </div>
+          </footer>
 
         </main>
 
