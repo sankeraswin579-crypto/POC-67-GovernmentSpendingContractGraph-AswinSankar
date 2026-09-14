@@ -1,11 +1,12 @@
 POC-67 GOVERNMENT SPENDING CONTRACT GRAPH
 SELENIUM UAT REPORT
 ============================================================
-Run Time: 2026-09-14 12:33:49
+Run Time: 2026-09-14 12:41:19
 URL: https://poc-67-government-spending-contract.vercel.app/
 
 TEST 1 - Visual Load: PASS - POC-67 dashboard loaded successfully.
-TEST 2 - Graph Handshake: FAIL - No graph node with data-testid='graph-node-*' was found on the live deployment.
+TEST 2 - Graph Handshake: FAIL - Graph node or Intelligence Panel was not available: Message: 
+
 TEST 3 - Developer Signature: PASS - Developer Information modal displayed Aswin Sankar P.S.
 
 ============================================================
