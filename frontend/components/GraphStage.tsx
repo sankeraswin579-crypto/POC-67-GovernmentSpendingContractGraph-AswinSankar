@@ -8,18 +8,23 @@ type GraphNode = {
   id: string;
   label?: string;
   type?: string;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
 };
 
-type GraphLink = {
+type GraphEdge = {
   source: string;
   target: string;
 };
 
-type GraphData = {
-  nodes: GraphNode[];
-  links: GraphLink[];
+type GraphResponse = {
+  nodes?: GraphNode[];
+  edges?: GraphEdge[];
+};
+
+type RenderNode = GraphNode & {
+  x: number;
+  y: number;
 };
 
 const API =
@@ -27,13 +32,10 @@ const API =
   "http://127.0.0.1:8000";
 
 export default function GraphStage() {
-  const [graph, setGraph] = useState<GraphData>({
-    nodes: [],
-    links: [],
-  });
-
+  const [nodes, setNodes] = useState<RenderNode[]>([]);
+  const [edges, setEdges] = useState<GraphEdge[]>([]);
   const [selectedNode, setSelectedNode] =
-    useState<GraphNode | null>(null);
+    useState<RenderNode | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -52,45 +54,43 @@ export default function GraphStage() {
 
         if (!response.ok) {
           throw new Error(
-            `Graph request failed with status ${response.status}`
+            `Graph API returned HTTP ${response.status}`
           );
         }
 
-        const data = await response.json();
+        const data: GraphResponse = await response.json();
 
         if (!mounted) {
           return;
         }
 
-        const rawNodes = Array.isArray(data?.nodes)
+        const rawNodes = Array.isArray(data.nodes)
           ? data.nodes
           : [];
 
-        const rawLinks = Array.isArray(data?.links)
-          ? data.links
+        const rawEdges = Array.isArray(data.edges)
+          ? data.edges
           : [];
 
-        const width = 900;
-        const height = 500;
-
-        const nodes: GraphNode[] = rawNodes.map(
-          (node: GraphNode, index: number) => ({
+        const renderedNodes: RenderNode[] =
+          rawNodes.map((node, index) => ({
             ...node,
             x:
               typeof node.x === "number"
                 ? node.x
-                : 80 + ((index * 137) % 740),
+                : 70 + ((index * 137) % 740),
             y:
               typeof node.y === "number"
                 ? node.y
-                : 80 + ((index * 83) % 340),
-          })
-        );
+                : 70 + ((index * 83) % 360),
+          }));
 
-        setGraph({
-          nodes,
-          links: rawLinks,
-        });
+        setNodes(renderedNodes);
+        setEdges(rawEdges);
+
+        if (renderedNodes.length === 0) {
+          setError("The graph API returned no nodes.");
+        }
       } catch (err) {
         if (!mounted) {
           return;
@@ -99,7 +99,7 @@ export default function GraphStage() {
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to load contract relationship graph."
+            : "Unable to load the contract relationship graph."
         );
       } finally {
         if (mounted) {
@@ -116,11 +116,13 @@ export default function GraphStage() {
   }, []);
 
   const findNode = (id: string) =>
-    graph.nodes.find((node) => node.id === id);
+    nodes.find((node) => node.id === id);
 
   return (
-    <div className="relative min-h-[520px] overflow-hidden rounded-2xl border border-slate-800 bg-[#030712]">
-      {/* Loading */}
+    <div
+      data-testid="graph-stage"
+      className="relative min-h-[520px] overflow-hidden rounded-2xl border border-slate-800 bg-[#030712]"
+    >
       {loading && (
         <div
           data-testid="graph-loading"
@@ -130,7 +132,6 @@ export default function GraphStage() {
         </div>
       )}
 
-      {/* Error */}
       {!loading && error && (
         <div
           data-testid="graph-error"
@@ -148,7 +149,6 @@ export default function GraphStage() {
         </div>
       )}
 
-      {/* Graph */}
       {!loading && !error && (
         <>
           <svg
@@ -157,15 +157,10 @@ export default function GraphStage() {
             role="img"
             aria-label="Government contract relationship graph"
           >
-            {/* Links */}
-            {graph.links.map((link, index) => {
-              const source = findNode(
-                String(link.source)
-              );
-
-              const target = findNode(
-                String(link.target)
-              );
+            {/* Relationship edges */}
+            {edges.map((edge, index) => {
+              const source = findNode(String(edge.source));
+              const target = findNode(String(edge.target));
 
               if (!source || !target) {
                 return null;
@@ -173,9 +168,7 @@ export default function GraphStage() {
 
               return (
                 <line
-                  key={`${String(link.source)}-${String(
-                    link.target
-                  )}-${index}`}
+                  key={`${edge.source}-${edge.target}-${index}`}
                   x1={source.x}
                   y1={source.y}
                   x2={target.x}
@@ -187,8 +180,8 @@ export default function GraphStage() {
               );
             })}
 
-            {/* Nodes */}
-            {graph.nodes.map((node) => (
+            {/* Interactive graph nodes */}
+            {nodes.map((node) => (
               <g
                 key={node.id}
                 data-testid={`graph-node-${node.id}`}
@@ -209,18 +202,18 @@ export default function GraphStage() {
                 }}
               >
                 <circle
-                  r="18"
+                  r="20"
                   className="fill-cyan-500/20 stroke-cyan-400"
                   strokeWidth="2"
                 />
 
                 <circle
-                  r="6"
+                  r="7"
                   className="fill-cyan-400"
                 />
 
                 <text
-                  x="24"
+                  x="27"
                   y="5"
                   className="fill-slate-300 text-[12px]"
                 >
@@ -228,21 +221,8 @@ export default function GraphStage() {
                 </text>
               </g>
             ))}
-
-            {/* Empty-state marker */}
-            {graph.nodes.length === 0 && (
-              <text
-                x="450"
-                y="250"
-                textAnchor="middle"
-                className="fill-slate-400 text-[16px]"
-              >
-                No graph nodes returned by the backend.
-              </text>
-            )}
           </svg>
 
-          {/* Intelligence Panel */}
           <IntelligencePanel
             node={selectedNode}
             onClose={() => setSelectedNode(null)}
@@ -252,4 +232,3 @@ export default function GraphStage() {
     </div>
   );
 }
-
