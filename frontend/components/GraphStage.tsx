@@ -1,175 +1,181 @@
 
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import IntelligencePanel from "@/components/IntelligencePanel";
 
 type GraphNode = {
   id: string;
-  label: string;
+  label?: string;
   type?: string;
+  x: number;
+  y: number;
 };
 
 type GraphLink = {
   source: string;
   target: string;
-  label?: string;
 };
 
 type GraphData = {
-  nodes?: GraphNode[];
-  links?: GraphLink[];
-  edges?: GraphLink[];
+  nodes: GraphNode[];
+  links: GraphLink[];
 };
 
-type GraphStageProps = {
-  data?: GraphData;
-  apiUrl?: string;
-};
+const API =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://127.0.0.1:8000";
 
-export default function GraphStage({
-  data,
-  apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000",
-}: GraphStageProps) {
-  const [graph, setGraph] = useState<GraphData>(data || {});
-  const [loading, setLoading] = useState(!data);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
+export default function GraphStage() {
+  const [graph, setGraph] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
+
+  const [selectedNode, setSelectedNode] =
+    useState<GraphNode | null>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (data) {
-      setGraph(data);
-      setLoading(false);
-      return;
-    }
+    let mounted = true;
 
     async function loadGraph() {
       try {
         setLoading(true);
-        setError(null);
+        setError("");
 
-        const response = await fetch(`${apiUrl}/api/graph`);
+        const response = await fetch(`${API}/api/graph`, {
+          cache: "no-store",
+        });
 
         if (!response.ok) {
-          throw new Error(`Graph API returned ${response.status}`);
+          throw new Error(
+            `Graph request failed with status ${response.status}`
+          );
         }
 
-        const result = await response.json();
-        setGraph(result);
+        const data = await response.json();
+
+        if (!mounted) {
+          return;
+        }
+
+        const rawNodes = Array.isArray(data?.nodes)
+          ? data.nodes
+          : [];
+
+        const rawLinks = Array.isArray(data?.links)
+          ? data.links
+          : [];
+
+        const width = 900;
+        const height = 500;
+
+        const nodes: GraphNode[] = rawNodes.map(
+          (node: GraphNode, index: number) => ({
+            ...node,
+            x:
+              typeof node.x === "number"
+                ? node.x
+                : 80 + ((index * 137) % 740),
+            y:
+              typeof node.y === "number"
+                ? node.y
+                : 80 + ((index * 83) % 340),
+          })
+        );
+
+        setGraph({
+          nodes,
+          links: rawLinks,
+        });
       } catch (err) {
+        if (!mounted) {
+          return;
+        }
+
         setError(
           err instanceof Error
             ? err.message
-            : "Unable to load graph data."
+            : "Unable to load contract relationship graph."
         );
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     }
 
     loadGraph();
-  }, [data, apiUrl]);
 
-  const nodes = graph.nodes || [];
-  const links = graph.links || graph.edges || [];
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-  const nodePositions = useMemo(() => {
-    const centerX = 300;
-    const centerY = 220;
-    const radius = Math.min(170, Math.max(80, nodes.length * 18));
-
-    return nodes.map((node, index) => {
-      const angle =
-        nodes.length > 0
-          ? (index / nodes.length) * Math.PI * 2
-          : 0;
-
-      return {
-        ...node,
-        x: centerX + Math.cos(angle) * radius,
-        y: centerY + Math.sin(angle) * radius,
-      };
-    });
-  }, [nodes]);
-
-  const nodeMap = useMemo(() => {
-    return new Map(nodePositions.map((node) => [node.id, node]));
-  }, [nodePositions]);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-[440px] items-center justify-center rounded-2xl border border-slate-700 bg-[#030712]">
-        <div className="text-sm text-slate-400">
-          Loading contract graph...
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-[440px] flex-col items-center justify-center rounded-2xl border border-red-900/50 bg-[#030712] p-6 text-center">
-        <div className="mb-2 text-sm font-medium text-red-400">
-          Unable to load contract graph
-        </div>
-
-        <div className="text-xs text-slate-500">
-          {error}
-        </div>
-      </div>
-    );
-  }
+  const findNode = (id: string) =>
+    graph.nodes.find((node) => node.id === id);
 
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-slate-700 bg-[#030712]">
-      <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-        <div>
-          <h2 className="text-sm font-semibold text-white">
-            Contract Network
-          </h2>
-
-          <p className="mt-1 text-xs text-slate-500">
-            Government agencies, vendors, and contracts
-          </p>
-        </div>
-
-        <div className="flex gap-4 text-xs text-slate-400">
-          <span>
-            Nodes:{" "}
-            <strong className="text-white">
-              {nodes.length}
-            </strong>
-          </span>
-
-          <span>
-            Links:{" "}
-            <strong className="text-white">
-              {links.length}
-            </strong>
-          </span>
-        </div>
-      </div>
-
-      <div className="relative overflow-auto">
-        <svg
-          viewBox="0 0 600 440"
-          className="h-[440px] min-w-[600px] w-full"
-          role="img"
-          aria-label="Government contract relationship graph"
+    <div className="relative min-h-[520px] overflow-hidden rounded-2xl border border-slate-800 bg-[#030712]">
+      {/* Loading */}
+      {loading && (
+        <div
+          data-testid="graph-loading"
+          className="flex min-h-[520px] items-center justify-center text-sm text-slate-400"
         >
-          {/* Links */}
-          {links.map((link, index) => {
-            const source = nodeMap.get(String(link.source));
-            const target = nodeMap.get(String(link.target));
+          Loading government contract relationship graph...
+        </div>
+      )}
 
-            if (!source || !target) {
-              return null;
-            }
+      {/* Error */}
+      {!loading && error && (
+        <div
+          data-testid="graph-error"
+          className="flex min-h-[520px] items-center justify-center p-6 text-center"
+        >
+          <div>
+            <p className="font-semibold text-red-400">
+              Graph unavailable
+            </p>
 
-            return (
-              <g
-                key={`${String(link.source)}-${String(link.target)}-${index}`}
-              >
+            <p className="mt-2 text-sm text-slate-400">
+              {error}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Graph */}
+      {!loading && !error && (
+        <>
+          <svg
+            viewBox="0 0 900 500"
+            className="h-[520px] w-full"
+            role="img"
+            aria-label="Government contract relationship graph"
+          >
+            {/* Links */}
+            {graph.links.map((link, index) => {
+              const source = findNode(
+                String(link.source)
+              );
+
+              const target = findNode(
+                String(link.target)
+              );
+
+              if (!source || !target) {
+                return null;
+              }
+
+              return (
                 <line
+                  key={`${String(link.source)}-${String(
+                    link.target
+                  )}-${index}`}
                   x1={source.x}
                   y1={source.y}
                   x2={target.x}
@@ -178,154 +184,72 @@ export default function GraphStage({
                   className="text-slate-700"
                   strokeWidth="1.5"
                 />
+              );
+            })}
 
-                {link.label && (
-                  <text
-                    x={(source.x + target.x) / 2}
-                    y={(source.y + target.y) / 2}
-                    className="fill-slate-500"
-                    fontSize="9"
-                    textAnchor="middle"
-                  >
-                    {link.label}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-
-          {/* Clickable Nodes */}
-          {nodePositions.map((node) => (
-            <g
-              key={node.id}
-              data-testid={`graph-node-${node.id}`}
-              role="button"
-              tabIndex={0}
-              aria-label={`Select ${node.label || node.id}`}
-              className="cursor-pointer"
-              transform={`translate(${node.x}, ${node.y})`}
-              onClick={() => setSelectedNode(node)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelectedNode(node);
-                }
-              }}
-            >
-              <circle
-                r="24"
-                className={`fill-slate-950 ${
-                  selectedNode?.id === node.id
-                    ? "stroke-cyan-400"
-                    : "stroke-slate-500"
-                }`}
-                strokeWidth="2"
-              />
-
-              <circle
-                r="17"
-                className="fill-slate-800"
-              />
-
-              <text
-                y="4"
-                textAnchor="middle"
-                className="fill-white pointer-events-none"
-                fontSize="10"
-                fontWeight="600"
+            {/* Nodes */}
+            {graph.nodes.map((node) => (
+              <g
+                key={node.id}
+                data-testid={`graph-node-${node.id}`}
+                role="button"
+                tabIndex={0}
+                aria-label={`Select ${node.label || node.id}`}
+                className="cursor-pointer outline-none"
+                transform={`translate(${node.x}, ${node.y})`}
+                onClick={() => setSelectedNode(node)}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                  ) {
+                    event.preventDefault();
+                    setSelectedNode(node);
+                  }
+                }}
               >
-                {node.label?.slice(0, 12) || node.id.slice(0, 12)}
-              </text>
+                <circle
+                  r="18"
+                  className="fill-cyan-500/20 stroke-cyan-400"
+                  strokeWidth="2"
+                />
 
-              {node.type && (
+                <circle
+                  r="6"
+                  className="fill-cyan-400"
+                />
+
                 <text
-                  y="42"
-                  textAnchor="middle"
-                  className="fill-slate-500 pointer-events-none"
-                  fontSize="9"
+                  x="24"
+                  y="5"
+                  className="fill-slate-300 text-[12px]"
                 >
-                  {node.type}
+                  {node.label || node.id}
                 </text>
-              )}
-            </g>
-          ))}
-        </svg>
+              </g>
+            ))}
 
-        {nodes.length === 0 && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p className="text-sm text-slate-500">
-              No graph data available.
-            </p>
-          </div>
-        )}
-
-        {/* Intelligence Panel */}
-        {selectedNode && (
-          <div
-            data-testid="intelligence-panel"
-            className="absolute right-4 top-4 w-80 rounded-2xl border border-cyan-500/30 bg-[#0B1117] p-5 shadow-2xl"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-cyan-400">
-                  AI Intelligence
-                </p>
-
-                <h3 className="mt-2 text-lg font-bold text-white">
-                  {selectedNode.label || selectedNode.id}
-                </h3>
-              </div>
-
-              <button
-                type="button"
-                data-testid="intelligence-panel-close"
-                aria-label="Close intelligence panel"
-                className="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-800 hover:text-white"
-                onClick={() => setSelectedNode(null)}
+            {/* Empty-state marker */}
+            {graph.nodes.length === 0 && (
+              <text
+                x="450"
+                y="250"
+                textAnchor="middle"
+                className="fill-slate-400 text-[16px]"
               >
-                ×
-              </button>
-            </div>
+                No graph nodes returned by the backend.
+              </text>
+            )}
+          </svg>
 
-            <div className="mt-5 space-y-3">
-              <div className="rounded-xl bg-[#111827] p-3">
-                <p className="text-xs text-slate-500">
-                  Entity ID
-                </p>
-
-                <p className="mt-1 break-all text-sm text-slate-200">
-                  {selectedNode.id}
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-[#111827] p-3">
-                <p className="text-xs text-slate-500">
-                  Entity Type
-                </p>
-
-                <p className="mt-1 text-sm font-medium text-cyan-300">
-                  {selectedNode.type || "Government Contract Entity"}
-                </p>
-              </div>
-
-              <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/20 p-3">
-                <p className="text-xs font-semibold text-cyan-400">
-                  Intelligence Insight
-                </p>
-
-                <p className="mt-1 text-sm leading-6 text-slate-300">
-                  This entity is part of the government procurement
-                  relationship network. Use the connected entities and
-                  contract relationships to investigate spending patterns,
-                  suppliers, and procurement risks.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          {/* Intelligence Panel */}
+          <IntelligencePanel
+            node={selectedNode}
+            onClose={() => setSelectedNode(null)}
+          />
+        </>
+      )}
     </div>
   );
 }
-
 
