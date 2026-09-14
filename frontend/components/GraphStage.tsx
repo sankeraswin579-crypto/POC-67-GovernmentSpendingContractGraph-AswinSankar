@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -32,6 +33,7 @@ export default function GraphStage({
   const [graph, setGraph] = useState<GraphData>(data || {});
   const [loading, setLoading] = useState(!data);
   const [error, setError] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
   useEffect(() => {
     if (data) {
@@ -164,7 +166,9 @@ export default function GraphStage({
             }
 
             return (
-              <g key={`${String(link.source)}-${String(link.target)}-${index}`}>
+              <g
+                key={`${String(link.source)}-${String(link.target)}-${index}`}
+              >
                 <line
                   x1={source.x}
                   y1={source.y}
@@ -190,15 +194,31 @@ export default function GraphStage({
             );
           })}
 
-          {/* Nodes */}
+          {/* Clickable Nodes */}
           {nodePositions.map((node) => (
             <g
               key={node.id}
+              data-testid={`graph-node-${node.id}`}
+              role="button"
+              tabIndex={0}
+              aria-label={`Select ${node.label || node.id}`}
+              className="cursor-pointer"
               transform={`translate(${node.x}, ${node.y})`}
+              onClick={() => setSelectedNode(node)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedNode(node);
+                }
+              }}
             >
               <circle
                 r="24"
-                className="fill-slate-950 stroke-slate-500"
+                className={`fill-slate-950 ${
+                  selectedNode?.id === node.id
+                    ? "stroke-cyan-400"
+                    : "stroke-slate-500"
+                }`}
                 strokeWidth="2"
               />
 
@@ -210,7 +230,7 @@ export default function GraphStage({
               <text
                 y="4"
                 textAnchor="middle"
-                className="fill-white"
+                className="fill-white pointer-events-none"
                 fontSize="10"
                 fontWeight="600"
               >
@@ -221,7 +241,7 @@ export default function GraphStage({
                 <text
                   y="42"
                   textAnchor="middle"
-                  className="fill-slate-500"
+                  className="fill-slate-500 pointer-events-none"
                   fontSize="9"
                 >
                   {node.type}
@@ -238,7 +258,74 @@ export default function GraphStage({
             </p>
           </div>
         )}
+
+        {/* Intelligence Panel */}
+        {selectedNode && (
+          <div
+            data-testid="intelligence-panel"
+            className="absolute right-4 top-4 w-80 rounded-2xl border border-cyan-500/30 bg-[#0B1117] p-5 shadow-2xl"
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-cyan-400">
+                  AI Intelligence
+                </p>
+
+                <h3 className="mt-2 text-lg font-bold text-white">
+                  {selectedNode.label || selectedNode.id}
+                </h3>
+              </div>
+
+              <button
+                type="button"
+                data-testid="intelligence-panel-close"
+                aria-label="Close intelligence panel"
+                className="rounded-lg px-2 py-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+                onClick={() => setSelectedNode(null)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <div className="rounded-xl bg-[#111827] p-3">
+                <p className="text-xs text-slate-500">
+                  Entity ID
+                </p>
+
+                <p className="mt-1 break-all text-sm text-slate-200">
+                  {selectedNode.id}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-[#111827] p-3">
+                <p className="text-xs text-slate-500">
+                  Entity Type
+                </p>
+
+                <p className="mt-1 text-sm font-medium text-cyan-300">
+                  {selectedNode.type || "Government Contract Entity"}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-cyan-500/20 bg-cyan-950/20 p-3">
+                <p className="text-xs font-semibold text-cyan-400">
+                  Intelligence Insight
+                </p>
+
+                <p className="mt-1 text-sm leading-6 text-slate-300">
+                  This entity is part of the government procurement
+                  relationship network. Use the connected entities and
+                  contract relationships to investigate spending patterns,
+                  suppliers, and procurement risks.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+

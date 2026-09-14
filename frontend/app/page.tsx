@@ -1,3 +1,4 @@
+
 "use client";
 
 import Topbar from "@/components/Topbar";
@@ -8,6 +9,7 @@ import SupplierChart from "@/components/SupplierChart";
 import DepartmentBarChart from "@/components/DepartmentBarChart";
 import BudgetPieChart from "@/components/BudgetPieChart";
 import RecentContractsTable from "@/components/RecentContractsTable";
+import DeveloperInfo from "@/components/DeveloperInfo";
 
 import {
   DollarSign,
@@ -22,6 +24,9 @@ export default function Home() {
 
       {/* Top Navigation */}
       <Topbar />
+
+      {/* Developer Information / Signature */}
+      <DeveloperInfo />
 
       <div className="flex">
 
@@ -41,7 +46,7 @@ export default function Home() {
             {/* Developer / Internship Badge */}
             <div className="mt-4 inline-flex flex-wrap items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/5 px-4 py-2">
               <span className="text-sm text-slate-400">
-                Designed & Developed by
+                Designed &amp; Developed by
               </span>
 
               <span className="text-sm font-semibold text-cyan-400">
@@ -67,11 +72,21 @@ export default function Home() {
             </h2>
 
             <ul className="mt-4 space-y-2 text-sm text-slate-300">
-              <li>• Government spending increased by 18% compared with last year.</li>
-              <li>• Infrastructure receives the largest budget allocation.</li>
-              <li>• ABC Engineering is the leading supplier.</li>
-              <li>• AI detected 12 procurement anomalies.</li>
-              <li>• Estimated optimization opportunity: ₹8.7 Million.</li>
+              <li>
+                • Government spending increased by 18% compared with last year.
+              </li>
+              <li>
+                • Infrastructure receives the largest budget allocation.
+              </li>
+              <li>
+                • ABC Engineering is the leading supplier.
+              </li>
+              <li>
+                • AI detected 12 procurement anomalies.
+              </li>
+              <li>
+                • Estimated optimization opportunity: ₹8.7 Million.
+              </li>
             </ul>
           </div>
 
@@ -130,12 +145,14 @@ export default function Home() {
           {/* Developer Signature */}
           <footer className="mt-8 rounded-2xl border border-cyan-500/20 bg-[#0B1117] px-6 py-5">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+
               <div>
                 <p className="text-sm font-semibold text-white">
                   Government Spending Contract Graph — PoC #67
                 </p>
+
                 <p className="mt-1 text-sm text-slate-400">
-                  Designed & Developed by{" "}
+                  Designed &amp; Developed by{" "}
                   <span className="font-medium text-cyan-400">
                     Aswin Sankar P.S.
                   </span>
@@ -146,10 +163,12 @@ export default function Home() {
                 <p className="text-sm font-medium text-white">
                   AI Engineer Intern — Infocreon
                 </p>
+
                 <p className="mt-1 text-xs text-slate-500">
                   Real Rails Internship • Batch 7
                 </p>
               </div>
+
             </div>
           </footer>
 
