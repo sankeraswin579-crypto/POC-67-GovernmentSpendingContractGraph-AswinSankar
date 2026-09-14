@@ -1,6 +1,7 @@
 
 "use client";
 
+import GraphStage from "@/components/GraphStage";
 import Topbar from "@/components/Topbar";
 import Sidebar from "@/components/Sidebar";
 import StatsCard from "@/components/StatsCard";
@@ -89,6 +90,24 @@ export default function Home() {
               </li>
             </ul>
           </div>
+
+          {/* Contract Relationship Graph */}
+          <section
+            className="rounded-2xl border border-cyan-500/20 bg-[#0B1117] p-5"
+          >
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-cyan-400">
+                Government Contract Relationship Graph
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Explore relationships between departments, suppliers, and
+                government contracts.
+              </p>
+            </div>
+
+            <GraphStage />
+          </section>
 
           {/* KPI Cards */}
           <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -183,3 +202,4 @@ export default function Home() {
     </div>
   );
 }
+
